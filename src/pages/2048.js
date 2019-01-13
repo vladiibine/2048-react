@@ -33,6 +33,9 @@ class Page2048 extends React.Component {
 
   /**
    * This entire function and everything it uses is deprecated and wrong
+   * ...ACTUALLY, I might salvage this! I just need to consider the 2d matrix as a local variable,
+   * and create it from the "source of truth" which would be an array of number elements like
+   * [elem(2,3,$1), elem(0,0,$8), elem(1,4,$64), ...]
    */
   spawnNums() {
     let spawnablePlaces = [];
