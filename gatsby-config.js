@@ -30,5 +30,6 @@ module.exports = {
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.app/offline
     // 'gatsby-plugin-offline',
+    `gatsby-plugin-sass`,  // Vlad: I added this here so I can use .scss files
   ],
 }

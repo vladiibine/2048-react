@@ -6,10 +6,6 @@ import SEO from '../components/seo'
 
 
 class Number extends React.Component {
-  constructor(props){
-    super(props);
-  }
-
   render(){
     const {posX, posY, number} = this.props;
 
@@ -17,7 +13,29 @@ class Number extends React.Component {
       <div className={`position-${posX}-${posY}`}>{number}</div>
     )
   }
+
+  moveTo(posX, posY){
+
+  }
+
+  times2(){
+
+  }
+
 }
+
+/**
+ * Function that will always return a unique integer
+ * (depends of course on whether you call it enough times... cuz at some point, it overflows)
+ */
+const generateId = (() => {
+  let currentId = 0;
+
+  return () => {
+    currentId++;
+    return currentId;
+  }
+})();
 
 
 class Page2048 extends React.Component {
@@ -25,23 +43,30 @@ class Page2048 extends React.Component {
     super(props);
 
     this.state = {
-      nums: []
+      nums: this.generateSpawnableNums([]),  //will contain {id:<ID>, posX: <int>, posY: <int>}
     };
-
-    this.spawnNums();
   }
 
   /**
-   * This entire function and everything it uses is deprecated and wrong
-   * ...ACTUALLY, I might salvage this! I just need to consider the 2d matrix as a local variable,
-   * and create it from the "source of truth" which would be an array of number elements like
-   * [elem(2,3,$1), elem(0,0,$8), elem(1,4,$64), ...]
+   * returns an array with 1-2 elems like {id:<int>, posX: <int>, posY: <int>}
+   * If no numbers can be generated, the game ends
    */
-  spawnNums() {
+  generateSpawnableNums(currentNums) {
+    let positionMatrix = [
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ];
+
+    for (let currentNum of currentNums){
+      positionMatrix[currentNum.posX][currentNum.posY] = true; // anything that !== null, is fine
+    }
+
     let spawnablePlaces = [];
-    for (let level1ArrayIdx = 0; level1ArrayIdx < this.state.nums.length; level1ArrayIdx++) {
-      for (let elemIdx = 0; elemIdx < this.state.nums[level1ArrayIdx].length; elemIdx++) {
-        if (this.state.nums[level1ArrayIdx][elemIdx] === null){
+    for (let level1ArrayIdx = 0; level1ArrayIdx < positionMatrix.length; level1ArrayIdx++) {
+      for (let elemIdx = 0; elemIdx < positionMatrix[level1ArrayIdx].length; elemIdx++) {
+        if (positionMatrix[level1ArrayIdx][elemIdx] === null){
           spawnablePlaces.push([level1ArrayIdx, elemIdx]);
         }
       }
@@ -54,21 +79,16 @@ class Page2048 extends React.Component {
 
     let elementsToSpawn = [];
     for (let i = 0; i < numSpawns; i++) {
-      elementsToSpawn.push(this.popRandomElement(spawnablePlaces))
+      let spawnableElement = this.popRandomElement(spawnablePlaces);
+      elementsToSpawn.push(
+        {
+          id: generateId(),
+          posX: spawnableElement[0],
+          posY: spawnableElement[1]
+        })
     }
 
-    let newState = [
-      [...this.state[0]],
-      [...this.state[1]],
-      [...this.state[2]],
-      [...this.state[3]],
-    ];
-    for (let elementToSpawn of elementsToSpawn){
-      newState[elementToSpawn[0]][elementToSpawn[1]] = 2;
-    }
-
-    this.setState({nums: newState});
-
+    return elementsToSpawn
   }
 
   /**
@@ -87,30 +107,31 @@ class Page2048 extends React.Component {
         <h1>2048!</h1>
         <Link to="/">Go back to the homepage</Link>
         <div className="grid-container">
-          <div className="grid-row">
-            <div className="grid-elem"></div>
-            <div className="grid-elem"></div>
-            <div className="grid-elem"></div>
-            <div className="grid-elem"></div>
-          </div>
-          <div className="grid-row">
-            <div className="grid-elem"></div>
-            <div className="grid-elem"></div>
-            <div className="grid-elem"></div>
-            <div className="grid-elem"></div>
-          </div>
-          <div className="grid-row">
-            <div className="grid-elem"></div>
-            <div className="grid-elem"></div>
-            <div className="grid-elem"></div>
-            <div className="grid-elem"></div>
-          </div>
-          <div className="grid-row">
-            <div className="grid-elem"></div>
-            <div className="grid-elem"></div>
-            <div className="grid-elem"></div>
-            <div className="grid-elem"></div>
-          </div>
+
+          {/*<div className="grid-row">*/}
+            {/*<div className="grid-elem"></div>*/}
+            {/*<div className="grid-elem"></div>*/}
+            {/*<div className="grid-elem"></div>*/}
+            {/*<div className="grid-elem"></div>*/}
+          {/*</div>*/}
+          {/*<div className="grid-row">*/}
+            {/*<div className="grid-elem"></div>*/}
+            {/*<div className="grid-elem"></div>*/}
+            {/*<div className="grid-elem"></div>*/}
+            {/*<div className="grid-elem"></div>*/}
+          {/*</div>*/}
+          {/*<div className="grid-row">*/}
+            {/*<div className="grid-elem"></div>*/}
+            {/*<div className="grid-elem"></div>*/}
+            {/*<div className="grid-elem"></div>*/}
+            {/*<div className="grid-elem"></div>*/}
+          {/*</div>*/}
+          {/*<div className="grid-row">*/}
+            {/*<div className="grid-elem"></div>*/}
+            {/*<div className="grid-elem"></div>*/}
+            {/*<div className="grid-elem"></div>*/}
+            {/*<div className="grid-elem"></div>*/}
+          {/*</div>*/}
         </div>
       </Layout>
     );
