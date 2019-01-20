@@ -31,9 +31,9 @@ class NumberState {
 
 class NumberCell extends React.Component {
   render(){
-    const {newValue, oldX, newX, oldY, newY} = this.props.numState;
+    const {newValue, oldX, newX, oldY, newY, oldValue, appearing} = this.props.numState;
 
-    const className = `tile tile-${newValue} tile-position-${newX + 1}-${newY + 1} tile-new`;
+    const className = `tile tile-${newValue} tile-position-${newX + 1}-${newY + 1} ${appearing || oldValue !== newValue? 'tile-new': ''}`;
 
     return <div className={className}>
              <div className="tile-inner">{newValue}</div>
@@ -111,10 +111,23 @@ class Page2048 extends React.Component {
     }
 
     // spawn new numbers
-    const newElems = this.state.numStateArray.concat(this.generateNumStates(this.state.numStateArray));
+    let newElems = [];
+    for (let newElem of this.state.numStateArray.concat(this.generateNumStates(this.state.numStateArray))){
+      newElems.push(new NumberState(
+        newElem.oldX,
+        newElem.oldY,
+        newElem.newX,
+        newElem.newY,
+        newElem.oldValue,
+        newElem.newValue,
+        newElem.appearing,
+        newElem.disappearing,
+      ))
+    }
 
     // move numbers
     this.moveCells(newElems, moveX, moveY);
+    this.setState({numStateArray: newElems})
   }
 
   /**
@@ -155,6 +168,10 @@ class Page2048 extends React.Component {
     for (let ix=0; ix<currentBoard.length; ix++){
       for(let iy=0; iy<currentBoard[ix].length; iy++){
         let currentElem = currentBoard[ix][iy];
+        if(currentElem === null){
+          continue;
+        }
+        // a b d 1
 
         let spyX = ix + incrementX;
         let spyY = iy + incrementY;
@@ -164,6 +181,8 @@ class Page2048 extends React.Component {
         let pairInSight = true;
 
         while (spyX >=0 && spyX < 4 && spyY >= 0 && spyY < 4){
+          debugger;
+
           let spyElem = currentBoard[spyX][spyY];
           if(spyElem === null){
             movePositions++;
@@ -178,10 +197,15 @@ class Page2048 extends React.Component {
           } else if(spyElem.pair !== null){
             movePositions++;
           }
+
+          spyY += incrementY;
+          spyX += incrementX;
         }
 
-        currentElem.newX = currentElem.oldX + movePositions * incrementX;
-        currentElem.newY = currentElem.oldY + movePositions * incrementY;
+        if (currentElem !== null){
+          currentElem.newX = currentElem.oldX + movePositions * incrementX;
+          currentElem.newY = currentElem.oldY + movePositions * incrementY;
+        }
       }
     }
 
