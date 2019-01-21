@@ -94,26 +94,30 @@ class Page2048 extends React.Component {
     switch (e.keyCode) {
       case 37: {  // left
         moveX = -1;
+        e.preventDefault();
         break;
       }
       case 38: {  // up
         moveY = -1;
+        e.preventDefault();
         break;
       }
       case 39: { // right
         moveX = 1;
+        e.preventDefault();
         break;
       }
       case 40: { //down
-        moveY = -1;
+        moveY = 1;
+        e.preventDefault();
         break;
       }
     }
 
     // spawn new numbers
-    let newElems = [];
+    let tempNewElems = [];
     for (let newElem of this.state.numStateArray.concat(this.generateNumStates(this.state.numStateArray))){
-      newElems.push(new NumberState(
+      tempNewElems.push(new NumberState(
         newElem.oldX,
         newElem.oldY,
         newElem.newX,
@@ -126,8 +130,18 @@ class Page2048 extends React.Component {
     }
 
     // move numbers
-    this.moveCells(newElems, moveX, moveY);
+    this.moveCells(tempNewElems, moveX, moveY);
+    this.setState({numStateArray: tempNewElems});
+
+    // purge disappearing elements
+    let newElems = [];
+    for (let newElem of tempNewElems){
+      if (!newElem.disappearing){
+        newElems.push(newElem);
+      }
+    }
     this.setState({numStateArray: newElems})
+
   }
 
   /**
@@ -202,10 +216,8 @@ class Page2048 extends React.Component {
           spyX += incrementX;
         }
 
-        if (currentElem !== null){
-          currentElem.newX = currentElem.oldX + movePositions * incrementX;
-          currentElem.newY = currentElem.oldY + movePositions * incrementY;
-        }
+        currentElem.newX = currentElem.oldX + movePositions * incrementX;
+        currentElem.newY = currentElem.oldY + movePositions * incrementY;
       }
     }
 
@@ -245,20 +257,25 @@ class Page2048 extends React.Component {
     let elementsToSpawn = [];
     for (let i = 0; i < numSpawns; i++) {
       let spawnableElement = this.popRandomElement(spawnablePlaces);
-      elementsToSpawn.push(
-        new NumberState(
-          spawnableElement[0],  //oldY
-          spawnableElement[1],  //oldY
+      if (spawnableElement === undefined){
+        alert("Game done! congrats for the score!")
+        this.setState({numStateArray: []})
+      } else{
+        elementsToSpawn.push(
+          new NumberState(
+            spawnableElement[0],  //oldY
+            spawnableElement[1],  //oldY
 
-          spawnableElement[0],  //newX
-          spawnableElement[1],  //newY
+            spawnableElement[0],  //newX
+            spawnableElement[1],  //newY
 
-          2,
-          2,
-          true,
-          false,
+            2,
+            2,
+            true,
+            false,
+          )
         )
-      )
+      }
     }
 
     return elementsToSpawn;
