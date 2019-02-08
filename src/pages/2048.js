@@ -209,42 +209,7 @@ export class BoardManager {
 
     return elementsToSpawn;
   }
-
-  triggerBoardMoveDEPRECATED(moveX, moveY, numStates) {
-// spawn new numbers
-    let tempNewElems = [];
-    let newGeneratedElems = this.generateNumStates(numStates);
-
-    if (typeof newGeneratedElems === 'undefined'){
-      return;
-    }
-
-    for (let newElem of numStates.concat(newGeneratedElems)) {
-      tempNewElems.push(new NumberState(
-        newElem.oldX,
-        newElem.oldY,
-        newElem.x,
-        newElem.y,
-        newElem.oldValue,
-        newElem.value,
-        newElem.appearing,
-        newElem.disappearing,
-      ))
-    }
-
-    // move numbers
-    this.executeBoardMove(tempNewElems, moveX, moveY);
-
-    // purge disappearing elements
-    let newElems = [];
-    for (let newElem of tempNewElems) {
-      if (!newElem.disappearing) {
-        newElems.push(newElem);
-      }
-    }
-    return newElems;
-  }
-
+  
   triggerBoardMove(moveX, moveY, numStates) {
     // 1. try-move
     // 2. if NOT successful, quit
