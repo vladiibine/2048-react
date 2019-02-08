@@ -1,8 +1,13 @@
 import React from 'react'
 import {Link} from 'gatsby'
-
-import Layout from '../components/layout'
 import SEO from '../components/seo'
+
+const generateUniqueId = (() => {
+  let currentID=0;
+  return () => {
+    currentID++;
+    return currentID}
+})();
 
 export class NumberState {
   /**
@@ -18,15 +23,108 @@ export class NumberState {
    * @param {NumberState} pair - a NumState which will merge with the current one
    */
   constructor(oldX, oldY, x, y, oldValue, value, appearing, disappearing, pair=null){
-    this.oldX = oldX;
-    this.oldY = oldY;
-    this.x = x;
-    this.y = y;
-    this.oldValue = oldValue;
-    this.value = value;
-    this.appearing = appearing;
-    this.disappearing = disappearing;
-    this.pair = pair;
+
+    console.log("Creating "+ this);
+    this._id = generateUniqueId();
+    this._oldX = oldX;
+    this._oldY = oldY;
+    this._x = x;
+    this._y = y;
+    this._oldValue = oldValue;
+    this._value = value;
+    this._appearing = appearing;
+    this._disappearing = disappearing;
+    this._pair = pair;
+  }
+
+  get oldX() {
+    return this._oldX;
+  }
+
+  get oldY() {
+    return this._oldY;
+  }
+
+  get x() {
+    return this._x;
+  }
+
+  get y() {
+    return this._y;
+  }
+
+  get oldValue() {
+    return this._oldValue;
+  }
+
+  get value() {
+    return this._value;
+  }
+
+  get appearing() {
+    return this._appearing;
+  }
+
+  get disappearing() {
+    return this._disappearing;
+  }
+
+  get pair() {
+    return this._pair;
+  }
+
+  set oldX(value) {
+    console.log("Setting oldX to:" + value + " for: " + this);
+    this._oldX = value;
+  }
+
+  set oldY(value) {
+    console.log("Setting oldY to:" + value + " for: " + this);
+    this._oldY = value;
+  }
+
+  set x(value) {
+    console.log("Setting x to:" + value + " for: " + this);
+    this._x = value;
+  }
+
+  set y(value) {
+    console.log("Setting y to:" + value + " for: " + this);
+    this._y = value;
+  }
+
+  set oldValue(value) {
+    console.log("Setting oldValue to:" + value + " for: " + this);
+    this._oldValue = value;
+  }
+
+  set value(value) {
+    console.log("Setting value to:" + value + " for: " + this);
+    this._value = value;
+  }
+
+  set appearing(value) {
+    console.log("Setting appearing to:" + value + " for: " + this);
+    this._appearing = value;
+  }
+
+  set disappearing(value) {
+    console.log("Setting disappearing to:" + value + " for: " + this);
+    this._disappearing = value;
+  }
+
+  set pair(value) {
+    console.log("Setting pair to:" + value + " for: " + this);
+    this._pair = value;
+  }
+
+  toString(){
+    const {_id, _oldX, _oldY, _x, _y, _oldValue, _value, _appearing, _disappearing, _pair} = this;
+    const pairID = _pair ? _pair.id : null;
+    return ("NumberState with id:"+_id + " oldX:" + _oldX + " oldY:"+_oldY+" x:"+_x +" y:"+_y +
+      " oldValue:"+_oldValue+" value:"+_value+" appearing:"+_appearing+"_disappearing"+_disappearing+
+      " pair:"+ pairID
+    )
   }
 }
 
@@ -112,7 +210,7 @@ export class BoardManager {
     return elementsToSpawn;
   }
 
-  triggerBoardMove(moveX, moveY, numStates) {
+  triggerBoardMoveDEPRECATED(moveX, moveY, numStates) {
 // spawn new numbers
     let tempNewElems = [];
     let newGeneratedElems = this.generateNumStates(numStates);
@@ -146,11 +244,37 @@ export class BoardManager {
     }
     return newElems;
   }
+
+  triggerBoardMove(moveX, moveY, numStates) {
+    // 1. try-move
+    // 2. if NOT successful, quit
+    // 3. clean disappearing
+    // 4. spawn
+    let moveSucces = this.executeBoardMove(numStates, moveX, moveY);
+    if (!moveSucces){
+      return;
+    }
+
+    let returnableElems = [];
+    for (let elem of numStates){
+      if (!elem.disappearing){
+        returnableElems.push(elem)
+      }
+    }
+
+    returnableElems = returnableElems.concat(this.generateNumStates(returnableElems));
+
+    return returnableElems;
+
+  }
+
+
     /**
    *
    * @param {NumberState[]} nums
    * @param {number} incrementX - will be +-1 or 0; +-1 just show the direction, not the number of cells
    * @param {number} incrementY - will be +-1 or 0; +-1 just show the direction, not the number of cells
+   * @return {boolean} - whether anything moved
    */
   executeBoardMove(nums, incrementX, incrementY){
     /*
@@ -180,6 +304,8 @@ export class BoardManager {
       currentBoard[num.x][num.y] = num;
     }
 
+    let somethingMoved = false;
+
     // set the new positions, and new values
     for (let ix=0; ix<currentBoard.length; ix++){
       for(let iy=0; iy<currentBoard[ix].length; iy++){
@@ -192,25 +318,32 @@ export class BoardManager {
         let spyX = ix + incrementX;
         let spyY = iy + incrementY;
 
+        let maxRepeats = 16;
+
         let movePositions = 0;
         let hasPaired = false;
         let pairInSight = true;
 
-        while (spyX >=0 && spyX < 4 && spyY >= 0 && spyY < 4){
-          debugger;
+        while (spyX >=0 && spyX < 4 && spyY >= 0 && spyY < 4 && maxRepeats > 0){
+          maxRepeats--;  // temporary hack. Normally, our while loop wouldn't spin forever; this restricts it by force;
 
           let spyElem = currentBoard[spyX][spyY];
           if(spyElem === null){
             movePositions++;
-          } else if(spyElem.oldValue !== currentElem.oldValue){
+
+          } else if(spyElem.value !== currentElem.value){
             pairInSight = false;
-          } else if(spyElem.oldValue === currentElem.oldValue && pairInSight && !hasPaired){
+
+          } else if(spyElem.value === currentElem.value && pairInSight && !hasPaired && !currentElem.pair &&!spyElem.pair){
             movePositions++;
             hasPaired = true;
+
+            currentElem.pair = spyElem;
             spyElem.pair = currentElem;
             spyElem.oldValue = spyElem.value;
             spyElem.value = spyElem.value * 2;
             currentElem.disappearing = true;
+
           } else if(spyElem.pair !== null){
             movePositions++;
           }
@@ -222,10 +355,26 @@ export class BoardManager {
         currentElem.oldX = currentElem.x;
         currentElem.oldY = currentElem.y;
 
+        if(movePositions > 0){
+          somethingMoved = true;
+        }
+
         currentElem.x = currentElem.x + movePositions * incrementX;
         currentElem.y = currentElem.y + movePositions * incrementY;
       }
     }
+
+    // clear the .paired flag; was useful only while moving
+    for (let ix=0; ix<currentBoard.length; ix++){
+      for(let iy=0; iy<currentBoard[ix].length; iy++) {
+        let currentElem = currentBoard[ix][iy];
+        if (currentElem){
+          currentElem.pair = null;
+        }
+      }}
+
+    return somethingMoved;
+
 
   }
 

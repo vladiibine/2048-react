@@ -114,6 +114,54 @@ describe("BoardManager.executeBoardMove -> merging of elements", () => {
     expect(nums[1].y).toEqual(2);
     expect(nums[1].oldX).toEqual(2);
     expect(nums[1].oldY).toEqual(2);
+  });
+
+
+  it("handles 3 number 2s in a line", () => {
+    let nums = [new NumberState(
+      2, 2, 1, 2, 2, 2, false, false
+    ),
+    new NumberState(
+      2,2,2,2,2,2,false,false
+    ),
+    new NumberState(
+      2,2,3,2,2,2,false,false
+    )];
+
+    console.log('before');
+    for(let elem of nums){
+      console.log(elem)
+    }
+
+    manager.executeBoardMove(nums, -1, 0);
+
+
+    let elemsWithValue4 = [];
+    for (let elem of nums){
+      if (elem.value === 4){
+        elemsWithValue4.push(elem);
+      }
+    }
+
+    let disappearingElements = [];
+    for (let elem of nums){
+      if (elem.disappearing){
+        disappearingElements.push(elem);
+      }
+    }
+
+    console.log('after');
+    for(let elem of nums){
+      console.log(elem)
+    }
+
+    expect(disappearingElements.length).toBe(2);
+    expect(disappearingElements[0].value).toBe(2);
+
+    expect(elemsWithValue4.length).toBe(1);
+    expect(elemsWithValue4[0].disappearing).toBe(false);
+
+
   })
 });
 
