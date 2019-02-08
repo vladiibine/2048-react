@@ -258,7 +258,7 @@ class Page2048 extends React.Component {
     for (let i = 0; i < numSpawns; i++) {
       let spawnableElement = this.popRandomElement(spawnablePlaces);
       if (spawnableElement === undefined){
-        alert("Game done! congrats for the score!")
+        alert("Game done! congrats for the score!");
         this.setState({numStateArray: []})
       } else{
         elementsToSpawn.push(
