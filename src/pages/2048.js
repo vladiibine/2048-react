@@ -57,76 +57,72 @@ const generateId = (() => {
 
 
 class BoardManager {
-
-}
-
-
-class Page2048 extends React.Component {
-  constructor(props) {
-    super(props);
-
-    // 1. generateNumStates
-    // 2. render
-    // 3. repeat:
-    // 3.1 onKeyPress
-    // 3.2. if generateNumStates succeeds:
-    // 3.2.1. changeCellStates(up/down/left/right)
-    // 3.2.2. render
-    // 3.3. ...else:
-    // 3.3.1. congratulate player on the score!
-    // 3.3.2. BREAK
-
-    let boardManager = new BoardManager();
-    this.state = {
-      // nums: this.DEPRECATEDgenerateSpawnableNums([]),  //will contain {id:<ID>, posX: <int>, posY: <int>}
-      boardManager: boardManager,
-      numStateArray: this.generateNumStates(),  // {array[NumberState]}
-    };
-
-    this.reactToKeyPress = this.reactToKeyPress.bind(this);
-
-    window.onkeydown = this.reactToKeyPress;
+  /**
+   * Pick a random array element, and return it, while also removing it from the array
+   * @param array
+   * @returns {T}
+   */
+  popRandomElement(array) {
+    return array.splice(Math.random() * array.length | 0, 1)[0];
   }
 
-  componentWillUnmount() {
-    window.onkeydown = null;  // deregister/clean current event handler.
-  }
-  
-  reactToKeyPress(e){
-    console.log(e);
-    let moveX = 0;
-    let moveY = 0;
+    /**
+   *
+   * @param {NumberState[]} stateArray
+   * @returns {Array}
+   */
+  generateNumStates(stateArray = []){
+    let positionMatrix = [
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ];
 
-    // determine move direction;
-    switch (e.keyCode) {
-      case 37: {  // left
-        moveX = -1;
-        e.preventDefault();
-        break;
-      }
-      case 38: {  // up
-        moveY = -1;
-        e.preventDefault();
-        break;
-      }
-      case 39: { // right
-        moveX = 1;
-        e.preventDefault();
-        break;
-      }
-      case 40: { //down
-        moveY = 1;
-        e.preventDefault();
-        break;
+    for (let currentNum of stateArray){
+      positionMatrix[currentNum.newX][currentNum.newY] = true; // anything that !== null, is fine
+    }
+
+    let spawnablePlaces = [];
+    for (let xIndex = 0; xIndex < positionMatrix.length; xIndex++) {
+      for (let yIndex = 0; yIndex < positionMatrix[xIndex].length; yIndex++) {
+        if (positionMatrix[xIndex][yIndex] === null){
+          spawnablePlaces.push([xIndex, yIndex]);
+        }
       }
     }
-    let newElems = this.triggerBoardMove(moveX, moveY, this.state.numStateArray);
-    if (typeof newElems === 'undefined'){
-      alert('Game done! congrats!');
-      this.setState({numStateArray: this.generateNumStates()})
-    }
-    this.setState({numStateArray: newElems})
 
+    let numSpawns = 2;
+    if (Math.random() < 0.5){
+      numSpawns--;
+    }
+
+    let elementsToSpawn = [];
+    for (let i = 0; i < numSpawns; i++) {
+      let spawnableElement = this.popRandomElement(spawnablePlaces);
+      if (spawnableElement === undefined){
+        return;
+        // alert("Game done! congrats for the score!");
+        // this.setState({numStateArray: []})
+      } else{
+        elementsToSpawn.push(
+          new NumberState(
+            spawnableElement[0],  //oldY
+            spawnableElement[1],  //oldY
+
+            spawnableElement[0],  //newX
+            spawnableElement[1],  //newY
+
+            2,
+            2,
+            true,
+            false,
+          )
+        )
+      }
+    }
+
+    return elementsToSpawn;
   }
 
   triggerBoardMove(moveX, moveY, numStates) {
@@ -163,8 +159,7 @@ class Page2048 extends React.Component {
     }
     return newElems;
   }
-
-  /**
+    /**
    *
    * @param {NumberState[]} nums
    * @param {number} incrementX - will be +-1 or 0; +-1 just show the direction, not the number of cells
@@ -243,73 +238,79 @@ class Page2048 extends React.Component {
 
   }
 
-  /**
-   *
-   * @param {NumberState[]} stateArray
-   * @returns {Array}
-   */
-  generateNumStates(stateArray = []){
-    let positionMatrix = [
-      [null, null, null, null],
-      [null, null, null, null],
-      [null, null, null, null],
-      [null, null, null, null],
-    ];
 
-    for (let currentNum of stateArray){
-      positionMatrix[currentNum.newX][currentNum.newY] = true; // anything that !== null, is fine
-    }
+}
 
-    let spawnablePlaces = [];
-    for (let xIndex = 0; xIndex < positionMatrix.length; xIndex++) {
-      for (let yIndex = 0; yIndex < positionMatrix[xIndex].length; yIndex++) {
-        if (positionMatrix[xIndex][yIndex] === null){
-          spawnablePlaces.push([xIndex, yIndex]);
-        }
-      }
-    }
 
-    let numSpawns = 2;
-    if (Math.random() < 0.5){
-      numSpawns--;
-    }
+class Page2048 extends React.Component {
+  constructor(props) {
+    super(props);
 
-    let elementsToSpawn = [];
-    for (let i = 0; i < numSpawns; i++) {
-      let spawnableElement = this.popRandomElement(spawnablePlaces);
-      if (spawnableElement === undefined){
-        return;
-        // alert("Game done! congrats for the score!");
-        // this.setState({numStateArray: []})
-      } else{
-        elementsToSpawn.push(
-          new NumberState(
-            spawnableElement[0],  //oldY
-            spawnableElement[1],  //oldY
+    // 1. generateNumStates
+    // 2. render
+    // 3. repeat:
+    // 3.1 onKeyPress
+    // 3.2. if generateNumStates succeeds:
+    // 3.2.1. changeCellStates(up/down/left/right)
+    // 3.2.2. render
+    // 3.3. ...else:
+    // 3.3.1. congratulate player on the score!
+    // 3.3.2. BREAK
 
-            spawnableElement[0],  //newX
-            spawnableElement[1],  //newY
+    let boardManager = new BoardManager();
+    this.state = {
+      // nums: this.DEPRECATEDgenerateSpawnableNums([]),  //will contain {id:<ID>, posX: <int>, posY: <int>}
+      boardManager: boardManager,
+      numStateArray: boardManager.generateNumStates(),  // {array[NumberState]}
+    };
 
-            2,
-            2,
-            true,
-            false,
-          )
-        )
-      }
-    }
+    this.reactToKeyPress = this.reactToKeyPress.bind(this);
 
-    return elementsToSpawn;
+    window.onkeydown = this.reactToKeyPress;
   }
 
-  /**
-   * Pick a random array element, and return it, while also removing it from the array
-   * @param array
-   * @returns {T}
-   */
-  popRandomElement(array) {
-    return array.splice(Math.random() * array.length | 0, 1)[0];
+  componentWillUnmount() {
+    window.onkeydown = null;  // deregister/clean current event handler.
   }
+  
+  reactToKeyPress(e){
+    console.log(e);
+    let moveX = 0;
+    let moveY = 0;
+
+    // determine move direction;
+    switch (e.keyCode) {
+      case 37: {  // left
+        moveX = -1;
+        e.preventDefault();
+        break;
+      }
+      case 38: {  // up
+        moveY = -1;
+        e.preventDefault();
+        break;
+      }
+      case 39: { // right
+        moveX = 1;
+        e.preventDefault();
+        break;
+      }
+      case 40: { //down
+        moveY = 1;
+        e.preventDefault();
+        break;
+      }
+    }
+    let newElems = this.state.boardManager.triggerBoardMove(moveX, moveY, this.state.numStateArray);
+    if (typeof newElems === 'undefined'){
+      alert('Game done! congrats!');
+      this.setState({numStateArray: this.state.boardManager.generateNumStates()})
+    }
+    this.setState({numStateArray: newElems})
+
+  }
+
+
 
   // renderNumberCells(){
   //   return this.state.numStateArray.map((numState) => <NumberCell numberState={numState} />)
