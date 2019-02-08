@@ -120,7 +120,7 @@ class Page2048 extends React.Component {
         break;
       }
     }
-    let newElems = this.triggerBoardMove(moveX, moveY);
+    let newElems = this.triggerBoardMove(moveX, moveY, this.state.numStateArray);
     if (typeof newElems === 'undefined'){
       alert('Game done! congrats!');
       this.setState({numStateArray: this.generateNumStates()})
@@ -129,16 +129,16 @@ class Page2048 extends React.Component {
 
   }
 
-  triggerBoardMove(moveX, moveY) {
+  triggerBoardMove(moveX, moveY, numStates) {
 // spawn new numbers
     let tempNewElems = [];
-    let newGeneratedElems = this.generateNumStates(this.state.numStateArray);
+    let newGeneratedElems = this.generateNumStates(numStates);
 
     if (typeof newGeneratedElems === 'undefined'){
       return;
     }
 
-    for (let newElem of this.state.numStateArray.concat(newGeneratedElems)) {
+    for (let newElem of numStates.concat(newGeneratedElems)) {
       tempNewElems.push(new NumberState(
         newElem.oldX,
         newElem.oldY,
