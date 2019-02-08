@@ -6,6 +6,7 @@ import React from "react"
 import renderer from "react-test-renderer"
 
 import Header from "../components/header"
+import {BoardManager} from "./2048";
 
 describe("Header", () => {
   it("renders correctly", () => {
@@ -16,12 +17,22 @@ describe("Header", () => {
   })
 });
 
-describe("DummyTest", ()=>{
-  it("works", ()=>{
-    expect(2).toEqual(2);
-  });
+describe("BoardManager.popRandomElement", () => {
+  it("pops a random elem out of an array", () => {
+    let myArray = [1,2,3];
+    let manager = new BoardManager();
 
-  it("fails", () => {
-    expect(2).toEqual(3);
+    let poppedNum = manager.popRandomElement(myArray);
+    console.log(poppedNum);
+
+    expect(typeof poppedNum).toEqual('number');
+
+    // assert set([1,2,3]) > set(myArray)
+    expect([1,2,3]).toEqual(expect.arrayContaining(myArray));
+
+    expect(myArray).toHaveLength(2);
+
+    expect(myArray).not.toContain(poppedNum);
+    expect([1,2,3]).toContain(poppedNum);
   })
 });

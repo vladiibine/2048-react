@@ -4,7 +4,7 @@ import {Link} from 'gatsby'
 import Layout from '../components/layout'
 import SEO from '../components/seo'
 
-class NumberState {
+export class NumberState {
   /**
    *
    * @param {number}oldX
@@ -29,7 +29,7 @@ class NumberState {
   }
 }
 
-class NumberCell extends React.Component {
+export class NumberCell extends React.Component {
   render(){
     const {newValue, oldX, newX, oldY, newY, oldValue, appearing} = this.props.numState;
 
@@ -41,22 +41,7 @@ class NumberCell extends React.Component {
   }
 }
 
-
-/**
- * Function that will always return a unique integer
- * (depends of course on whether you call it enough times... cuz at some point, it overflows)
- */
-const generateId = (() => {
-  let currentId = 0;
-
-  return () => {
-    currentId++;
-    return currentId;
-  }
-})();
-
-
-class BoardManager {
+export class BoardManager {
   /**
    * Pick a random array element, and return it, while also removing it from the array
    * @param array
