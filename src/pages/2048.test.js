@@ -3,27 +3,16 @@
 // Find out more about how to test, how to run the tests in code-watch mode, etc by visiting
 // the link
 import React from "react"
-import renderer from "react-test-renderer"
 
-import Header from "../components/header"
 import {BoardManager, NumberState} from "./2048";
 
-describe("Header", () => {
-  it("renders correctly", () => {
-    const tree = renderer
-      .create(<Header siteTitle="Default Starter"/>)
-      .toJSON();
-    expect(tree).toMatchSnapshot()
-  })
-});
+let manager = new BoardManager();  // the BoardManager is stateless
 
 describe("BoardManager.popRandomElement", () => {
   it("pops a random elem out of an array", () => {
     let myArray = [1, 2, 3];
-    let manager = new BoardManager();
 
     let poppedNum = manager.popRandomElement(myArray);
-    console.log(poppedNum);
 
     expect(typeof poppedNum).toEqual('number');
 
@@ -38,19 +27,18 @@ describe("BoardManager.popRandomElement", () => {
 });
 
 describe('BoardManager.executeBoardMove , simple movements', () => {
-  let manager = new BoardManager();
 
   it("moves an element to the left", () => {
     let nums = [new NumberState(
-      2,2,2,2,2,2,false,false
+      2, 2, 2, 2, 2, 2, false, false
     )];
 
     manager.executeBoardMove(nums, -1, 0);
 
-    expect(nums[0].newX).toEqual(0);
+    expect(nums[0].x).toEqual(0);
     expect(nums[0].oldX).toEqual(2);
 
-    expect(nums[0].newY).toEqual(2);
+    expect(nums[0].y).toEqual(2);
     expect(nums[0].oldY).toEqual(2);
 
     expect(nums).toHaveLength(1);
@@ -58,15 +46,15 @@ describe('BoardManager.executeBoardMove , simple movements', () => {
 
   it("moves an element to the right", () => {
     let nums = [new NumberState(
-      2,2,2,2,2,2,false,false
+      2, 2, 2, 2, 2, 2, false, false
     )];
 
     manager.executeBoardMove(nums, 1, 0);
 
-    expect(nums[0].newX).toEqual(3);
+    expect(nums[0].x).toEqual(3);
     expect(nums[0].oldX).toEqual(2);
 
-    expect(nums[0].newY).toEqual(2);
+    expect(nums[0].y).toEqual(2);
     expect(nums[0].oldY).toEqual(2);
 
     expect(nums).toHaveLength(1);
@@ -74,15 +62,15 @@ describe('BoardManager.executeBoardMove , simple movements', () => {
 
   it("moves an element up", () => {
     let nums = [new NumberState(
-      2,2,2,2,2,2,false,false
+      2, 2, 2, 2, 2, 2, false, false
     )];
 
     manager.executeBoardMove(nums, 0, -1);
 
-    expect(nums[0].newX).toEqual(2);
+    expect(nums[0].x).toEqual(2);
     expect(nums[0].oldX).toEqual(2);
 
-    expect(nums[0].newY).toEqual(0);
+    expect(nums[0].y).toEqual(0);
     expect(nums[0].oldY).toEqual(2);
 
     expect(nums).toHaveLength(1);
@@ -90,17 +78,45 @@ describe('BoardManager.executeBoardMove , simple movements', () => {
 
   it("moves an element down", () => {
     let nums = [new NumberState(
-      2,2,2,2,2,2,false,false
+      2, 2, 2, 2, 2, 2, false, false
     )];
 
     manager.executeBoardMove(nums, 0, 1);
 
-    expect(nums[0].newX).toEqual(2);
+    expect(nums[0].x).toEqual(2);
     expect(nums[0].oldX).toEqual(2);
 
-    expect(nums[0].newY).toEqual(3);
+    expect(nums[0].y).toEqual(3);
     expect(nums[0].oldY).toEqual(2);
 
     expect(nums).toHaveLength(1);
   })
+});
+
+
+describe("BoardManager.executeBoardMove -> merging of elements", () => {
+  it("merges 2 number 2s", () => {
+    let nums = [new NumberState(
+      2, 2, 1, 2, 2, 2, false, false
+    ),
+    new NumberState(
+      2,2,2,2,2,2,false,false
+    )];
+
+    manager.executeBoardMove(nums, -1, 0);
+
+    expect(nums[0].x).toEqual(0);
+    expect(nums[0].y).toEqual(2);
+    expect(nums[0].oldX).toEqual(1);
+    expect(nums[0].oldY).toEqual(2);
+
+    expect(nums[1].x).toEqual(0);
+    expect(nums[1].y).toEqual(2);
+    expect(nums[1].oldX).toEqual(2);
+    expect(nums[1].oldY).toEqual(2);
+  })
+});
+
+describe("BoardManager.executeBoardMove -> bumping into other elements", () => {
+
 });

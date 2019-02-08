@@ -9,20 +9,21 @@ export class NumberState {
    *
    * @param {number}oldX
    * @param {number}oldY
-   * @param {number}newX
-   * @param {number}newY
+   * @param {number}x
+   * @param {number}y
    * @param {number}oldValue
-   * @param {number}newValue
+   * @param {number}value
    * @param {boolean}appearing
    * @param {boolean}disappearing
+   * @param {NumberState} pair - a NumState which will merge with the current one
    */
-  constructor(oldX, oldY, newX, newY, oldValue, newValue, appearing, disappearing, pair=null){
+  constructor(oldX, oldY, x, y, oldValue, value, appearing, disappearing, pair=null){
     this.oldX = oldX;
     this.oldY = oldY;
-    this.newX = newX;
-    this.newY = newY;
+    this.x = x;
+    this.y = y;
     this.oldValue = oldValue;
-    this.newValue = newValue;
+    this.value = value;
     this.appearing = appearing;
     this.disappearing = disappearing;
     this.pair = pair;
@@ -31,12 +32,13 @@ export class NumberState {
 
 export class NumberCell extends React.Component {
   render(){
-    const {newValue, oldX, newX, oldY, newY, oldValue, appearing} = this.props.numState;
+    debugger;
+    const {value, oldX, x, oldY, y, oldValue, appearing} = this.props.numState;
 
-    const className = `tile tile-${newValue} tile-position-${newX + 1}-${newY + 1} ${appearing || oldValue !== newValue? 'tile-new': ''}`;
+    const className = `tile tile-${value} tile-position-${x + 1}-${y + 1} ${appearing || oldValue !== value? 'tile-new': ''}`;
 
     return <div className={className}>
-             <div className="tile-inner">{newValue}</div>
+             <div className="tile-inner">{value}</div>
            </div>
   }
 }
@@ -65,7 +67,7 @@ export class BoardManager {
     ];
 
     for (let currentNum of stateArray){
-      positionMatrix[currentNum.newX][currentNum.newY] = true; // anything that !== null, is fine
+      positionMatrix[currentNum.x][currentNum.y] = true; // anything that !== null, is fine
     }
 
     let spawnablePlaces = [];
@@ -92,11 +94,11 @@ export class BoardManager {
       } else{
         elementsToSpawn.push(
           new NumberState(
-            spawnableElement[0],  //oldY
+            spawnableElement[0],  //oldX
             spawnableElement[1],  //oldY
 
-            spawnableElement[0],  //newX
-            spawnableElement[1],  //newY
+            spawnableElement[0],  //x
+            spawnableElement[1],  //y
 
             2,
             2,
@@ -123,10 +125,10 @@ export class BoardManager {
       tempNewElems.push(new NumberState(
         newElem.oldX,
         newElem.oldY,
-        newElem.newX,
-        newElem.newY,
+        newElem.x,
+        newElem.y,
         newElem.oldValue,
-        newElem.newValue,
+        newElem.value,
         newElem.appearing,
         newElem.disappearing,
       ))
@@ -175,7 +177,7 @@ export class BoardManager {
 
     // set the current board
     for (let num of nums){
-      currentBoard[num.oldX][num.oldY] = num;
+      currentBoard[num.x][num.y] = num;
     }
 
     // set the new positions, and new values
@@ -206,7 +208,8 @@ export class BoardManager {
             movePositions++;
             hasPaired = true;
             spyElem.pair = currentElem;
-            spyElem.newValue = spyElem.oldValue * 2;
+            spyElem.oldValue = spyElem.value;
+            spyElem.value = spyElem.value * 2;
             currentElem.disappearing = true;
           } else if(spyElem.pair !== null){
             movePositions++;
@@ -216,8 +219,11 @@ export class BoardManager {
           spyX += incrementX;
         }
 
-        currentElem.newX = currentElem.oldX + movePositions * incrementX;
-        currentElem.newY = currentElem.oldY + movePositions * incrementY;
+        currentElem.oldX = currentElem.x;
+        currentElem.oldY = currentElem.y;
+
+        currentElem.x = currentElem.x + movePositions * incrementX;
+        currentElem.y = currentElem.y + movePositions * incrementY;
       }
     }
 
