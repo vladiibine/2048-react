@@ -56,6 +56,11 @@ const generateId = (() => {
 })();
 
 
+class BoardManager {
+
+}
+
+
 class Page2048 extends React.Component {
   constructor(props) {
     super(props);
@@ -71,8 +76,10 @@ class Page2048 extends React.Component {
     // 3.3.1. congratulate player on the score!
     // 3.3.2. BREAK
 
+    let boardManager = new BoardManager();
     this.state = {
-      nums: this.DEPRECATEDgenerateSpawnableNums([]),  //will contain {id:<ID>, posX: <int>, posY: <int>}
+      // nums: this.DEPRECATEDgenerateSpawnableNums([]),  //will contain {id:<ID>, posX: <int>, posY: <int>}
+      boardManager: boardManager,
       numStateArray: this.generateNumStates(),  // {array[NumberState]}
     };
 
@@ -113,10 +120,25 @@ class Page2048 extends React.Component {
         break;
       }
     }
+    let newElems = this.triggerBoardMove(moveX, moveY);
+    if (typeof newElems === 'undefined'){
+      alert('Game done! congrats!');
+      this.setState({numStateArray: this.generateNumStates()})
+    }
+    this.setState({numStateArray: newElems})
 
-    // spawn new numbers
+  }
+
+  triggerBoardMove(moveX, moveY) {
+// spawn new numbers
     let tempNewElems = [];
-    for (let newElem of this.state.numStateArray.concat(this.generateNumStates(this.state.numStateArray))){
+    let newGeneratedElems = this.generateNumStates(this.state.numStateArray);
+
+    if (typeof newGeneratedElems === 'undefined'){
+      return;
+    }
+
+    for (let newElem of this.state.numStateArray.concat(newGeneratedElems)) {
       tempNewElems.push(new NumberState(
         newElem.oldX,
         newElem.oldY,
@@ -130,18 +152,16 @@ class Page2048 extends React.Component {
     }
 
     // move numbers
-    this.moveCells(tempNewElems, moveX, moveY);
-    this.setState({numStateArray: tempNewElems});
+    this.executeBoardMove(tempNewElems, moveX, moveY);
 
     // purge disappearing elements
     let newElems = [];
-    for (let newElem of tempNewElems){
-      if (!newElem.disappearing){
+    for (let newElem of tempNewElems) {
+      if (!newElem.disappearing) {
         newElems.push(newElem);
       }
     }
-    this.setState({numStateArray: newElems})
-
+    return newElems;
   }
 
   /**
@@ -150,7 +170,7 @@ class Page2048 extends React.Component {
    * @param {number} incrementX - will be +-1 or 0; +-1 just show the direction, not the number of cells
    * @param {number} incrementY - will be +-1 or 0; +-1 just show the direction, not the number of cells
    */
-  moveCells(nums, incrementX, incrementY){
+  executeBoardMove(nums, incrementX, incrementY){
     /*
     0  0  0  2
     2  0  0  2
@@ -258,8 +278,9 @@ class Page2048 extends React.Component {
     for (let i = 0; i < numSpawns; i++) {
       let spawnableElement = this.popRandomElement(spawnablePlaces);
       if (spawnableElement === undefined){
-        alert("Game done! congrats for the score!");
-        this.setState({numStateArray: []})
+        return;
+        // alert("Game done! congrats for the score!");
+        // this.setState({numStateArray: []})
       } else{
         elementsToSpawn.push(
           new NumberState(
@@ -279,50 +300,6 @@ class Page2048 extends React.Component {
     }
 
     return elementsToSpawn;
-  }
-
-  /**
-   * returns an array with 1-2 elems like {id:<int>, posX: <int>, posY: <int>}
-   * If no numbers can be generated, the game ends
-   */
-  DEPRECATEDgenerateSpawnableNums(currentNums) {
-    let positionMatrix = [
-      [null, null, null, null],
-      [null, null, null, null],
-      [null, null, null, null],
-      [null, null, null, null],
-    ];
-
-    for (let currentNum of currentNums){
-      positionMatrix[currentNum.posX][currentNum.posY] = true; // anything that !== null, is fine
-    }
-
-    let spawnablePlaces = [];
-    for (let level1ArrayIdx = 0; level1ArrayIdx < positionMatrix.length; level1ArrayIdx++) {
-      for (let elemIdx = 0; elemIdx < positionMatrix[level1ArrayIdx].length; elemIdx++) {
-        if (positionMatrix[level1ArrayIdx][elemIdx] === null){
-          spawnablePlaces.push([level1ArrayIdx, elemIdx]);
-        }
-      }
-    }
-
-    let numSpawns = 2;
-    if (Math.random() < 0.5){
-      numSpawns = 1;
-    }
-
-    let elementsToSpawn = [];
-    for (let i = 0; i < numSpawns; i++) {
-      let spawnableElement = this.popRandomElement(spawnablePlaces);
-      elementsToSpawn.push(
-        {
-          id: generateId(),
-          posX: spawnableElement[0],
-          posY: spawnableElement[1]
-        })
-    }
-
-    return elementsToSpawn
   }
 
   /**
