@@ -133,7 +133,17 @@ export class NumberCell extends React.Component {
   render() {
     const {value, oldX, x, oldY, y, oldValue, appearing} = this.props.numState;
 
-    const className = `tile tile-${value} tile-position-${x + 1}-${y + 1} ${appearing || oldValue !== value ? 'tile-new' : ''}`;
+    let positionClass;
+    if (oldY !== y) {
+      positionClass = `for-row-${x + 1}-from-col-${oldY + 1}-to-${y + 1}`
+    } else if (oldX !== x){
+      positionClass = `for-col-${y + 1}-from-row-${oldX + 1}-to-${x + 1}`
+    } else if (appearing){
+      positionClass = `tile-position-${x + 1}-${y + 1}`
+    }
+    let appearingClass = `${appearing || oldValue !== value ? 'tile-new' : ''}`;
+
+    const className = `tile tile-${value} ${positionClass} ${appearingClass}`;
 
     return <div className={className}>
       <div className="tile-inner">{value}</div>
@@ -288,8 +298,6 @@ export class BoardManager {
     let incrementX = moveX > 0 ? -1 : 1;
     let iyInitial = moveY > 0 ? currentBoard.length -1 : 0;
     let incrementY = moveY > 0 ? -1 : 1;
-
-    debugger;
 
     // set the new positions, and new values
     for (let ix = ixInitial; ix < currentBoard.length && ix >= 0; ix = ix + incrementX) {
