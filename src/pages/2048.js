@@ -3,10 +3,11 @@ import {Link} from 'gatsby'
 import SEO from '../components/seo'
 
 const generateUniqueId = (() => {
-  let currentID=0;
+  let currentID = 0;
   return () => {
     currentID++;
-    return currentID}
+    return currentID
+  }
 })();
 
 export class NumberState {
@@ -22,9 +23,9 @@ export class NumberState {
    * @param {boolean}disappearing
    * @param {NumberState} pair - a NumState which will merge with the current one
    */
-  constructor(oldX, oldY, x, y, oldValue, value, appearing, disappearing, pair=null){
+  constructor(oldX, oldY, x, y, oldValue, value, appearing, disappearing, pair = null) {
 
-    console.log("Creating "+ this);
+    console.log("Creating " + this);
     this._id = generateUniqueId();
     this._oldX = oldX;
     this._oldY = oldY;
@@ -74,70 +75,69 @@ export class NumberState {
   }
 
   set oldX(value) {
-    console.log("Setting oldX to:" + value + " for: " + this);
+    // console.log("Setting oldX to:" + value + " for: " + this);
     this._oldX = value;
   }
 
   set oldY(value) {
-    console.log("Setting oldY to:" + value + " for: " + this);
+    // console.log("Setting oldY to:" + value + " for: " + this);
     this._oldY = value;
   }
 
   set x(value) {
-    console.log("Setting x to:" + value + " for: " + this);
+    // console.log("Setting x to:" + value + " for: " + this);
     this._x = value;
   }
 
   set y(value) {
-    console.log("Setting y to:" + value + " for: " + this);
+    // console.log("Setting y to:" + value + " for: " + this);
     this._y = value;
   }
 
   set oldValue(value) {
-    console.log("Setting oldValue to:" + value + " for: " + this);
+    // console.log("Setting oldValue to:" + value + " for: " + this);
     this._oldValue = value;
   }
 
   set value(value) {
-    console.log("Setting value to:" + value + " for: " + this);
+    // console.log("Setting value to:" + value + " for: " + this);
     this._value = value;
   }
 
   set appearing(value) {
-    console.log("Setting appearing to:" + value + " for: " + this);
+    // console.log("Setting appearing to:" + value + " for: " + this);
     this._appearing = value;
   }
 
   set disappearing(value) {
-    console.log("Setting disappearing to:" + value + " for: " + this);
+    // console.log("Setting disappearing to:" + value + " for: " + this);
     this._disappearing = value;
   }
 
   set pair(value) {
-    console.log("Setting pair to:" + value + " for: " + this);
+    // console.log("Setting pair to:" + value + " for: " + this);
     this._pair = value;
   }
 
-  toString(){
+  toString() {
     const {_id, _oldX, _oldY, _x, _y, _oldValue, _value, _appearing, _disappearing, _pair} = this;
     const pairID = _pair ? _pair.id : null;
-    return ("NumberState with id:"+_id + " oldX:" + _oldX + " oldY:"+_oldY+" x:"+_x +" y:"+_y +
-      " oldValue:"+_oldValue+" value:"+_value+" appearing:"+_appearing+"_disappearing"+_disappearing+
-      " pair:"+ pairID
+    return ("NumberState with id:" + _id + " oldX:" + _oldX + " oldY:" + _oldY + " x:" + _x + " y:" + _y +
+      " oldValue:" + _oldValue + " value:" + _value + " appearing:" + _appearing + "_disappearing" + _disappearing +
+      " pair:" + pairID
     )
   }
 }
 
 export class NumberCell extends React.Component {
-  render(){
-    debugger;
+  render() {
     const {value, oldX, x, oldY, y, oldValue, appearing} = this.props.numState;
 
-    const className = `tile tile-${value} tile-position-${x + 1}-${y + 1} ${appearing || oldValue !== value? 'tile-new': ''}`;
+    const className = `tile tile-${value} tile-position-${x + 1}-${y + 1} ${appearing || oldValue !== value ? 'tile-new' : ''}`;
 
     return <div className={className}>
-             <div className="tile-inner">{value}</div>
-           </div>
+      <div className="tile-inner">{value}</div>
+    </div>
   }
 }
 
@@ -151,12 +151,12 @@ export class BoardManager {
     return array.splice(Math.random() * array.length | 0, 1)[0];
   }
 
-    /**
+  /**
    *
    * @param {NumberState[]} stateArray
    * @returns {Array}
    */
-  generateNumStates(stateArray = []){
+  generateNumStates(stateArray = []) {
     let positionMatrix = [
       [null, null, null, null],
       [null, null, null, null],
@@ -164,32 +164,32 @@ export class BoardManager {
       [null, null, null, null],
     ];
 
-    for (let currentNum of stateArray){
+    for (let currentNum of stateArray) {
       positionMatrix[currentNum.x][currentNum.y] = true; // anything that !== null, is fine
     }
 
     let spawnablePlaces = [];
     for (let xIndex = 0; xIndex < positionMatrix.length; xIndex++) {
       for (let yIndex = 0; yIndex < positionMatrix[xIndex].length; yIndex++) {
-        if (positionMatrix[xIndex][yIndex] === null){
+        if (positionMatrix[xIndex][yIndex] === null) {
           spawnablePlaces.push([xIndex, yIndex]);
         }
       }
     }
 
     let numSpawns = 2;
-    if (Math.random() < 0.5){
+    if (Math.random() < 0.5) {
       numSpawns--;
     }
 
     let elementsToSpawn = [];
     for (let i = 0; i < numSpawns; i++) {
       let spawnableElement = this.popRandomElement(spawnablePlaces);
-      if (spawnableElement === undefined){
+      if (spawnableElement === undefined) {
         return;
         // alert("Game done! congrats for the score!");
         // this.setState({numStateArray: []})
-      } else{
+      } else {
         elementsToSpawn.push(
           new NumberState(
             spawnableElement[0],  //oldX
@@ -209,20 +209,20 @@ export class BoardManager {
 
     return elementsToSpawn;
   }
-  
+
   triggerBoardMove(moveX, moveY, numStates) {
     // 1. try-move
     // 2. if NOT successful, quit
     // 3. clean disappearing
     // 4. spawn
     let moveSucces = this.executeBoardMove(numStates, moveX, moveY);
-    if (!moveSucces){
+    if (!moveSucces) {
       return;
     }
 
     let returnableElems = [];
-    for (let elem of numStates){
-      if (!elem.disappearing){
+    for (let elem of numStates) {
+      if (!elem.disappearing) {
         returnableElems.push(elem)
       }
     }
@@ -233,15 +233,14 @@ export class BoardManager {
 
   }
 
-
-    /**
+  /**
    *
    * @param {NumberState[]} nums
-   * @param {number} incrementX - will be +-1 or 0; +-1 just show the direction, not the number of cells
-   * @param {number} incrementY - will be +-1 or 0; +-1 just show the direction, not the number of cells
+   * @param {number} moveX - will be +-1 or 0; +-1 just show the direction, not the number of cells
+   * @param {number} moveY - will be +-1 or 0; +-1 just show the direction, not the number of cells
    * @return {boolean} - whether anything moved
    */
-  executeBoardMove(nums, incrementX, incrementY){
+  executeBoardMove(nums, moveX, moveY) {
     /*
     0  0  0  2
     2  0  0  2
@@ -265,23 +264,39 @@ export class BoardManager {
     ];
 
     // set the current board
-    for (let num of nums){
+    for (let num of nums) {
       currentBoard[num.x][num.y] = num;
     }
 
     let somethingMoved = false;
 
+    // iterate in reverse order of the in
+
+    // Iterate through the board in the opposite direction as that pressed by the user;
+    let ixInitial = moveX > 0 ? currentBoard.length -1 : 0;
+    let incrementX = moveX > 0 ? -1 : 1;
+    let iyInitial = moveY > 0 ? currentBoard.length -1 : 0;
+    let incrementY = moveY > 0 ? -1 : 1;
+
+    debugger;
+
     // set the new positions, and new values
-    for (let ix=0; ix<currentBoard.length; ix++){
-      for(let iy=0; iy<currentBoard[ix].length; iy++){
+    for (let ix = ixInitial; ix < currentBoard.length && ix >= 0; ix = ix + incrementX) {
+      for (let iy = iyInitial; iy < currentBoard[ix].length && iy >= 0; iy = iy + incrementY) {
         let currentElem = currentBoard[ix][iy];
-        if(currentElem === null){
+        if (currentElem === null) {
           continue;
         }
         // a b d 1
 
-        let spyX = ix + incrementX;
-        let spyY = iy + incrementY;
+        // Move in the opposite direction as that pressed by the user
+        let spyX = moveX === 0 ? ix : ixInitial;
+        let spyY = moveY === 0 ? iy : iyInitial;
+
+        // avoid interaction with itself;
+        if(ix === spyX && iy === spyY){
+          continue;
+        }
 
         let maxRepeats = 16;
 
@@ -289,17 +304,22 @@ export class BoardManager {
         let hasPaired = false;
         let pairInSight = true;
 
-        while (spyX >=0 && spyX < 4 && spyY >= 0 && spyY < 4 && maxRepeats > 0){
+        while (spyX >= 0 && spyX < 4 && spyY >= 0 && spyY < 4 && maxRepeats > 0) {
           maxRepeats--;  // temporary hack. Normally, our while loop wouldn't spin forever; this restricts it by force;
 
+          // avoid interaction with itself;
+          if (spyX === ix && spyY === iy){
+            break;
+          }
+
           let spyElem = currentBoard[spyX][spyY];
-          if(spyElem === null){
+          if (spyElem === null) {
             movePositions++;
 
-          } else if(spyElem.value !== currentElem.value){
+          } else if (spyElem.value !== currentElem.value) {
             pairInSight = false;
 
-          } else if(spyElem.value === currentElem.value && pairInSight && !hasPaired && !currentElem.pair &&!spyElem.pair){
+          } else if (spyElem.value === currentElem.value && pairInSight && !hasPaired && !currentElem.pair && !spyElem.pair) {
             movePositions++;
             hasPaired = true;
 
@@ -309,34 +329,36 @@ export class BoardManager {
             spyElem.value = spyElem.value * 2;
             currentElem.disappearing = true;
 
-          } else if(spyElem.pair !== null){
+          } else if (spyElem.disappearing) {
+            // if the elements in front paired, movePositions++
             movePositions++;
           }
 
-          spyY += incrementY;
-          spyX += incrementX;
+          spyX += incrementX * Math.abs(moveX);
+          spyY += incrementY * Math.abs(moveY);
         }
 
         currentElem.oldX = currentElem.x;
         currentElem.oldY = currentElem.y;
 
-        if(movePositions > 0){
+        if (movePositions > 0) {
           somethingMoved = true;
         }
 
-        currentElem.x = currentElem.x + movePositions * incrementX;
-        currentElem.y = currentElem.y + movePositions * incrementY;
+        currentElem.x = currentElem.x + movePositions * moveX;
+        currentElem.y = currentElem.y + movePositions * moveY;
       }
     }
 
     // clear the .paired flag; was useful only while moving
-    for (let ix=0; ix<currentBoard.length; ix++){
-      for(let iy=0; iy<currentBoard[ix].length; iy++) {
+    for (let ix = 0; ix < currentBoard.length; ix++) {
+      for (let iy = 0; iy < currentBoard[ix].length; iy++) {
         let currentElem = currentBoard[ix][iy];
-        if (currentElem){
+        if (currentElem) {
           currentElem.pair = null;
         }
-      }}
+      }
+    }
 
     return somethingMoved;
 
@@ -377,8 +399,8 @@ class Page2048 extends React.Component {
   componentWillUnmount() {
     window.onkeydown = null;  // deregister/clean current event handler.
   }
-  
-  reactToKeyPress(e){
+
+  reactToKeyPress(e) {
     console.log(e);
     let moveX = 0;
     let moveY = 0;
@@ -405,16 +427,19 @@ class Page2048 extends React.Component {
         e.preventDefault();
         break;
       }
+      default: {
+        e.preventDefault();
+        return;
+      }
     }
     let newElems = this.state.boardManager.triggerBoardMove(moveX, moveY, this.state.numStateArray);
-    if (typeof newElems === 'undefined'){
+    if (typeof newElems === 'undefined') {
       alert('Game done! congrats!');
       this.setState({numStateArray: this.state.boardManager.generateNumStates()})
     }
     this.setState({numStateArray: newElems})
 
   }
-
 
 
   // renderNumberCells(){
@@ -456,20 +481,20 @@ class Page2048 extends React.Component {
         {/*</div>*/}
         <div className="container">
           {/*<div className="heading">*/}
-            {/*<h1 className="title"><a href="/">2048</a></h1>*/}
-            {/*<div className="scores-container">*/}
-              {/*<div className="score-container">3460*/}
-                {/*<div className="score-addition">+3460</div>*/}
-              {/*</div>*/}
-              {/*<div className="best-container">3460</div>*/}
-            {/*</div>*/}
+          {/*<h1 className="title"><a href="/">2048</a></h1>*/}
+          {/*<div className="scores-container">*/}
+          {/*<div className="score-container">3460*/}
+          {/*<div className="score-addition">+3460</div>*/}
+          {/*</div>*/}
+          {/*<div className="best-container">3460</div>*/}
+          {/*</div>*/}
           {/*</div>*/}
           {/*<div className="game-intro">*/}
-            {/*<a className="restart-button">New Game</a>*/}   {/*!!!! restart button!*/}
-            {/*<h2 className="subtitle">Play <strong>2048 Game</strong> Online</h2>*/}
-            {/*<div className="above-game">*/}
-              {/*<p>Join the numbers and get to the <strong>2048 tile!</strong></p>*/}
-            {/*</div>*/}
+          {/*<a className="restart-button">New Game</a>*/} {/*!!!! restart button!*/}
+          {/*<h2 className="subtitle">Play <strong>2048 Game</strong> Online</h2>*/}
+          {/*<div className="above-game">*/}
+          {/*<p>Join the numbers and get to the <strong>2048 tile!</strong></p>*/}
+          {/*</div>*/}
           {/*</div>*/}
 
           <div className="game-container">
@@ -513,74 +538,74 @@ class Page2048 extends React.Component {
             <div className="tile-container">
               {this.state.numStateArray.map((numState) => <NumberCell numState={numState}/>)}
               {/*<div className="tile tile-64 tile-position-1-1 tile-new">*/}
-                {/*<div className="tile-inner">64</div>*/}
+              {/*<div className="tile-inner">64</div>*/}
               {/*</div>*/}
               {/*<div className="tile tile-2 tile-position-1-2 tile-new">*/}
-                {/*<div className="tile-inner">2</div>*/}
+              {/*<div className="tile-inner">2</div>*/}
               {/*</div>*/}
               {/*<div className="tile tile-2 tile-position-1-3 tile-new">*/}
-                {/*<div className="tile-inner">2</div>*/}
+              {/*<div className="tile-inner">2</div>*/}
               {/*</div>*/}
               {/*<div className="tile tile-2 tile-position-1-4 tile-new">*/}
-                {/*<div className="tile-inner">2</div>*/}
+              {/*<div className="tile-inner">2</div>*/}
               {/*</div>*/}
               {/*<div className="tile tile-128 tile-position-2-1 tile-new">*/}
-                {/*<div className="tile-inner">128</div>*/}
+              {/*<div className="tile-inner">128</div>*/}
               {/*</div>*/}
               {/*<div className="tile tile-32 tile-position-2-2 tile-new">*/}
-                {/*<div className="tile-inner">32</div>*/}
+              {/*<div className="tile-inner">32</div>*/}
               {/*</div>*/}
               {/*<div className="tile tile-16 tile-position-2-3 tile-new">*/}
-                {/*<div className="tile-inner">16</div>*/}
+              {/*<div className="tile-inner">16</div>*/}
               {/*</div>*/}
               {/*<div className="tile tile-256 tile-position-3-1 tile-new">*/}
-                {/*<div className="tile-inner">256</div>*/}
+              {/*<div className="tile-inner">256</div>*/}
               {/*</div>*/}
               {/*<div className="tile tile-64 tile-position-3-2 tile-new">*/}
-                {/*<div className="tile-inner">64</div>*/}
+              {/*<div className="tile-inner">64</div>*/}
               {/*</div>*/}
               {/*<div className="tile tile-4 tile-position-3-3 tile-new">*/}
-                {/*<div className="tile-inner">4</div>*/}
+              {/*<div className="tile-inner">4</div>*/}
               {/*</div>*/}
               {/*<div className="tile tile-32 tile-position-4-1 tile-new">*/}
-                {/*<div className="tile-inner">32</div>*/}
+              {/*<div className="tile-inner">32</div>*/}
               {/*</div>*/}
               {/*<div className="tile tile-16 tile-position-4-2 tile-new">*/}
-                {/*<div className="tile-inner">16</div>*/}
+              {/*<div className="tile-inner">16</div>*/}
               {/*</div>*/}
               {/*<div className="tile tile-2 tile-position-4-4 tile-new">*/}
-                {/*<div className="tile-inner">2</div>*/}
+              {/*<div className="tile-inner">2</div>*/}
               {/*</div>*/}
             </div>
           </div>
 
 
           {/*<div className="fb-line">*/}
-            {/*<p className="game-explanation">*/}
-              {/*<strong className="important">How to play:</strong> Use your <strong>arrow*/}
-              {/*keys</strong> to move the tiles. When two tiles with the same number touch,*/}
-              {/*they <strong>merge into one!</strong>*/}
-            {/*</p>*/}
+          {/*<p className="game-explanation">*/}
+          {/*<strong className="important">How to play:</strong> Use your <strong>arrow*/}
+          {/*keys</strong> to move the tiles. When two tiles with the same number touch,*/}
+          {/*they <strong>merge into one!</strong>*/}
+          {/*</p>*/}
 
-            {/*<p className="text left">Share with friends</p>*/}
+          {/*<p className="text left">Share with friends</p>*/}
 
-            {/*<div className="twitter-button-wrapper"></div>*/}
-            {/*<a target="_blank" className="facebook-share-button"*/}
-               {/*href="https://www.facebook.com/sharer/sharer.php?u=http%3A//2048game.com">Facebook</a>*/}
-            {/*<div className="clear"></div>*/}
+          {/*<div className="twitter-button-wrapper"></div>*/}
+          {/*<a target="_blank" className="facebook-share-button"*/}
+          {/*href="https://www.facebook.com/sharer/sharer.php?u=http%3A//2048game.com">Facebook</a>*/}
+          {/*<div className="clear"></div>*/}
 
           {/*</div>*/}
           {/*<div className="clearfix"></div>*/}
 
 
           {/*<div>*/}
-            {/*<ul className="unstyled tips-and-tricks">*/}
-              {/*<li><a href="/tips-and-tricks">Tips &amp; Tricks</a></li>*/}
-              {/*<li className="even"><a href="/videos">2048 Videos</a></li>*/}
-              {/*<li><a href="/quotes">2048 Quotes</a></li>*/}
-              {/*<li className="even"><a href="/variations">2048 Variations</a></li>*/}
-            {/*</ul>*/}
-            {/*<div className="clearfix"></div>*/}
+          {/*<ul className="unstyled tips-and-tricks">*/}
+          {/*<li><a href="/tips-and-tricks">Tips &amp; Tricks</a></li>*/}
+          {/*<li className="even"><a href="/videos">2048 Videos</a></li>*/}
+          {/*<li><a href="/quotes">2048 Quotes</a></li>*/}
+          {/*<li className="even"><a href="/variations">2048 Variations</a></li>*/}
+          {/*</ul>*/}
+          {/*<div className="clearfix"></div>*/}
           {/*</div>*/}
 
           {/*<div className="clearfix"></div>*/}
