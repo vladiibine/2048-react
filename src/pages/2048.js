@@ -25,7 +25,6 @@ export class NumberState {
    */
   constructor(oldX, oldY, x, y, oldValue, value, appearing, disappearing, pair = null) {
 
-    console.log("Creating " + this);
     this._id = generateUniqueId();
     this._oldX = oldX;
     this._oldY = oldY;
@@ -36,6 +35,7 @@ export class NumberState {
     this._appearing = appearing;
     this._disappearing = disappearing;
     this._pair = pair;
+    console.log("Creating " + this);
   }
 
   get oldX() {
@@ -206,15 +206,21 @@ export class BoardManager {
         )
       }
     }
-    // return [new NumberState(
-    //   2, 2, 2, 0, 2, 4, false, false
-    // ),
-    // // new NumberState(
-    // //   2,2,1,0,2,2,false,false
-    // // ),
-    // new NumberState(
-    //   2,2,3,0,2,4,false,false
-    // )];
+
+    // return [
+    //   new NumberState(
+    //     2, 2, 0, 2, 2, 4, false, false
+    //   ),
+    //   new NumberState(
+    //     2, 2, 1, 2, 2, 2, false, false
+    //   ),
+    //   new NumberState(
+    //     2, 2, 2, 2, 2, 4, false, false
+    //   ),
+    //   new NumberState(
+    //     2, 2, 3, 2, 2, 2, false, false
+    //   )];
+
     return elementsToSpawn;
   }
 
