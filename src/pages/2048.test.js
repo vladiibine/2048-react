@@ -282,7 +282,7 @@ describe("BoardManager.executeBoardMove -> bumping into other elements", () => {
 
   });
 
-it("converts 2282+up to 4820", () => {
+  it("converts 2282+up to 4820", () => {
     let nums = [new NumberState(
       2, 2, 2, 0, 2, 2, false, false
     ),
@@ -298,7 +298,6 @@ it("converts 2282+up to 4820", () => {
 
     manager.executeBoardMove(nums, 0, -1);
 
-    console.log(nums);
     let disappearingElems = _.filter(nums, (e) => e.disappearing);
     expect(disappearingElems.length).toBe(1);
     expect(disappearingElems[0].oldY).toBe(1);
@@ -317,9 +316,41 @@ it("converts 2282+up to 4820", () => {
     expect(movedElems[0].y).toBe(movedElems[0].oldY - 1);
     expect(movedElems[1].y).toBe(movedElems[1].oldY - 1);
 
-    // expect(promotedElems[1].oldValue).toBe(2);
-    // expect(promotedElems[0].x).toBe(0);
-    // expect(promotedElems[1].x).toBe(1);
+  });
+
+  it("converts 2282+down to 0482", () => {
+    let nums = [new NumberState(
+      2, 0, 2, 0, 2, 2, false, false
+    ),
+    new NumberState(
+      2,1,2,1,2,2,false,false
+    ),
+    new NumberState(
+      2,2,2,2,8,8,false,false
+    ),
+    new NumberState(
+      2,3,2,3,2,2,false,false
+    )];
+
+    manager.executeBoardMove(nums, 0, 1);
+
+    let disappearingElems = _.filter(nums, (e) => e.disappearing);
+    expect(disappearingElems.length).toBe(1);
+    expect(disappearingElems[0].oldY).toBe(0);
+
+    let promotedElems = _.filter(nums, (e) => e.value !== e.oldValue);
+    expect(promotedElems.length).toBe(1);
+
+    expect(promotedElems[0].oldValue).toBe(2);
+    expect(promotedElems[0].value).toBe(4);
+    expect(promotedElems[0].x).toBe(2);
+    expect(promotedElems[0].y).toBe(1);
+
+
+    let nonPromotedElems = _.filter(nums, (e) => e.value === e.oldValue && !e.disappearing);
+    expect(nonPromotedElems.length).toBe(2);
+    expect(nonPromotedElems[0].y).toBe(nonPromotedElems[0].oldY);
+    expect(nonPromotedElems[1].y).toBe(nonPromotedElems[1].oldY);
 
   });
 
