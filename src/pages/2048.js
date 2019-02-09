@@ -206,7 +206,15 @@ export class BoardManager {
         )
       }
     }
-
+    // return [new NumberState(
+    //   2, 2, 2, 0, 2, 4, false, false
+    // ),
+    // // new NumberState(
+    // //   2,2,1,0,2,2,false,false
+    // // ),
+    // new NumberState(
+    //   2,2,3,0,2,4,false,false
+    // )];
     return elementsToSpawn;
   }
 
@@ -217,20 +225,27 @@ export class BoardManager {
     // 4. spawn
     let moveSucces = this.executeBoardMove(numStates, moveX, moveY);
     if (!moveSucces) {
-      return;
+      if (numStates.length === 16) {
+        // game done!
+        return;
+      } else {
+        // we couldn't make a move, but the board is not full yet
+        return [...numStates];
+      }
     }
 
+    // move successful, clean up the disappearing elements, and refresh the appearing flag;
     let returnableElems = [];
     for (let elem of numStates) {
       if (!elem.disappearing) {
         returnableElems.push(elem)
       }
+      elem.appearing = false; //
     }
 
     returnableElems = returnableElems.concat(this.generateNumStates(returnableElems));
 
     return returnableElems;
-
   }
 
   /**
@@ -256,17 +271,7 @@ export class BoardManager {
      2. sarim peste goluri + cuplaje
      3. cuplantzii sar pe acelasi loc
     */
-    const currentBoard = [
-      [null, null, null, null],
-      [null, null, null, null],
-      [null, null, null, null],
-      [null, null, null, null],
-    ];
-
-    // set the current board
-    for (let num of nums) {
-      currentBoard[num.x][num.y] = num;
-    }
+    const currentBoard = this.createCurrent2DBoard(nums);
 
     let somethingMoved = false;
 
@@ -301,8 +306,6 @@ export class BoardManager {
         let maxRepeats = 16;
 
         let movePositions = 0;
-        let hasPaired = false;
-        let pairInSight = true;
 
         while (spyX >= 0 && spyX < 4 && spyY >= 0 && spyY < 4 && maxRepeats > 0) {
           maxRepeats--;  // temporary hack. Normally, our while loop wouldn't spin forever; this restricts it by force;
@@ -316,12 +319,8 @@ export class BoardManager {
           if (spyElem === null) {
             movePositions++;
 
-          } else if (spyElem.value !== currentElem.value) {
-            pairInSight = false;
-
-          } else if (spyElem.value === currentElem.value && pairInSight && !hasPaired && !currentElem.pair && !spyElem.pair) {
+          } else if (spyElem.value === currentElem.value && this.isElemInSight(ix, iy, spyX, spyY, currentBoard) && !currentElem.pair && !spyElem.pair) {
             movePositions++;
-            hasPaired = true;
 
             currentElem.pair = spyElem;
             spyElem.pair = currentElem;
@@ -363,6 +362,49 @@ export class BoardManager {
     return somethingMoved;
 
 
+  }
+
+  createCurrent2DBoard(nums) {
+    const currentBoard = [
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ];
+
+    // set the current board
+    for (let num of nums) {
+      currentBoard[num.x][num.y] = num;
+    }
+    return currentBoard;
+  }
+
+  /**
+   * Whether 2 elements can bump into each other
+   * (they're next to one another, or there are only nulls in between)
+   */
+  isElemInSight(x1, y1, x2, y2, nums) {
+    if (y1 === y2){
+      for (let ix = Math.min(x1, x2); ix < Math.max(x1, x2); ix++){
+        if(ix !== x1 && ix !== x2){
+          if (nums[ix][y1] !== null){
+            return false;
+          }
+        }
+      }
+    }
+
+    if (x1 === x2){
+      for (let iy = Math.min(y1, y2); iy < Math.max(y1, y2); iy++){
+        if (iy !== y1 && iy !== y2){
+          if (nums[x1][iy] !== null){
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
   }
 
 
