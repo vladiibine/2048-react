@@ -93,8 +93,117 @@
 //    }
 //  }
 //}
+// This mixin was NOT borrowed, but I got inspiration from a similar idea
+@mixin create-animations-for-media($square-size){
+  @for $col from 1 to 5 {
+  @for $row1 from 1 to 5 {
+    @for $row2 from 1 to 5 {
+      $name: for-col-#{$col}-from-row-#{$row1}-to-#{$row2};
+
+      @if $row1 == $row2 {
+        .#{$name} {
+          -webkit-transform: translate(1px * $square-size * ($col - 1), ($row1 - 1) * 1px * $square-size);
+          -moz-transform: translate(1px * $square-size * ($col - 1), ($row1 - 1) * 1px * $square-size);
+          -ms-transform: translate(1px * $square-size * ($col - 1), ($row1 - 1) * 1px * $square-size);
+          -o-transform: translate(1px * $square-size * ($col - 1), ($row1 - 1) * 1px * $square-size);
+          transform: translate(1px * $square-size * ($col - 1), ($row1 - 1) * 1px * $square-size);
+        }
+      } @else {
+        .#{$name}{
+          -webkit-animation-name: #{$name};
+          -moz-animation-name: #{$name};
+          -o-animation-name: #{$name};
+          animation-name: #{$name};
+
+          -webkit-animation-duration: 0.1s;
+          -moz-animation-duration: 0.1s;
+          -o-animation-duration: 0.1s;
+          animation-duration: 0.1s;
+
+          -webkit-animation-fill-mode: forwards;
+          -moz-animation-fill-mode: forwards;
+          -o-animation-fill-mode: forwards;
+          animation-fill-mode: forwards;
+        }
+
+        @keyframes #{$name} {
+          from {
+            -webkit-transform: translate(1px * $square-size * ($col - 1), ($row1 - 1) * 1px * $square-size);
+            -moz-transform: translate(1px * $square-size * ($col - 1), ($row1 - 1) * 1px * $square-size);
+            -ms-transform: translate(1px * $square-size * ($col - 1), ($row1 - 1) * 1px * $square-size);
+            -o-transform: translate(1px * $square-size * ($col - 1), ($row1 - 1) * 1px * $square-size);
+            transform: translate(1px * $square-size * ($col - 1), ($row1 - 1) * 1px * $square-size);
+          }
+          to {
+            -webkit-transform: translate(1px * $square-size * ($col - 1), ($row2 - 1) * 1px * $square-size);
+            -moz-transform: translate(1px * $square-size * ($col - 1), ($row2 - 1) * 1px * $square-size);
+            -ms-transform: translate(1px * $square-size * ($col - 1), ($row2 - 1) * 1px * $square-size);
+            -o-transform: translate(1px * $square-size * ($col - 1), ($row2 - 1) * 1px * $square-size);
+            transform: translate(1px * $square-size * ($col - 1), ($row2 - 1) * 1px * $square-size);
+          }
+        }
+      }
+    }
+  }
+}
+
+@for $row from 1 to 5 {
+  @for $col1 from 1 to 5 {
+    @for $col2 from 1 to 5 {
+      $name: for-row-#{$row}-from-col-#{$col1}-to-#{$col2};
+
+      @if $col1 == $col2 {
+        .#{$name} {
+          -webkit-transform: translate(1px * $square-size * ($col1 - 1), ($row - 1) * 1px * $square-size);
+          -moz-transform: translate(1px * $square-size * ($col1 - 1), ($row - 1) * 1px * $square-size);
+          -ms-transform: translate(1px * $square-size * ($col1 - 1), ($row - 1) * 1px * $square-size);
+          -o-transform: translate(1px * $square-size * ($col1 - 1), ($row - 1) * 1px * $square-size);
+          transform: translate(1px * $square-size * ($col1 - 1), ($row - 1) * 1px * $square-size);
+        }
+      } @else {
+        .#{$name} {
+          -webkit-animation-name: #{$name};
+          -moz-animation-name: #{$name};
+          -o-animation-name: #{$name};
+          animation-name: #{$name};
+
+          -webkit-animation-duration: 0.1s;
+          -moz-animation-duration: 0.1s;
+          -o-animation-duration: 0.1s;
+          animation-duration: 0.1s;
+
+          -webkit-animation-fill-mode: forwards;
+          -moz-animation-fill-mode: forwards;
+          -o-animation-fill-mode: forwards;
+          animation-fill-mode: forwards;
+        }
+
+        @keyframes #{$name} {
+          from {
+            -webkit-transform: translate(1px * $square-size * ($col1 - 1), ($row - 1) * 1px * $square-size);
+            -moz-transform: translate(1px * $square-size * ($col1 - 1), ($row - 1) * 1px * $square-size);
+            -ms-transform: translate(1px * $square-size * ($col1 - 1), ($row - 1) * 1px * $square-size);
+            -o-transform: translate(1px * $square-size * ($col1 - 1), ($row - 1) * 1px * $square-size);
+            transform: translate(1px * $square-size * ($col1 - 1), ($row - 1) * 1px * $square-size);
+          }
+          to {
+            -webkit-transform: translate(1px * $square-size * ($col2 - 1), ($row - 1) * 1px * $square-size);
+            -moz-transform: translate(1px * $square-size * ($col2 - 1), ($row - 1) * 1px * $square-size);
+            -ms-transform: translate(1px * $square-size * ($col2 - 1), ($row - 1) * 1px * $square-size);
+            -o-transform: translate(1px * $square-size * ($col2 - 1), ($row - 1) * 1px * $square-size);
+            transform: translate(1px * $square-size * ($col2 - 1), ($row - 1) * 1px * $square-size);
+          }
+
+        }
+      }
+    }
+  }
+}
+}
+
 
 // absolutely this CSS was "borrowed". I'm absolutely no designer!
+
 
 //@import url(fonts/clear-sans.css);
 html, body {
@@ -504,111 +613,8 @@ hr {
   transform: translate(363px, 363px);
 }
 
+@include create-animations-for-media(121);
 
-@for $col from 1 to 4 {
-  @for $row1 from 1 to 4 {
-    @for $row2 from 1 to 4 {
-      $name: for-col-#{$col}-from-row-#{$row1}-to-#{$row2};
-
-      @if $row1 == $row2 {
-        .#{$name} {
-          -webkit-transform: translate(121px * ($col - 1), ($row1 - 1) * 1px);
-          -moz-transform: translate(121px * ($col - 1), ($row1 - 1) * 1px);
-          -ms-transform: translate(121px * ($col - 1), ($row1 - 1) * 1px);
-          -o-transform: translate(121px * ($col - 1), ($row1 - 1) * 1px);
-          transform: translate(121px * ($col - 1), ($row1 - 1) * 1px);
-        }
-      } @else {
-        .#{$name}{
-          -webkit-animation-name: #{$name};
-          -moz-animation-name: #{$name};
-          -o-animation-name: #{$name};
-          animation-name: #{$name};
-
-          -webkit-animation-duration: 0.1s;
-          -moz-animation-duration: 0.1s;
-          -o-animation-duration: 0.1s;
-          animation-duration: 0.1s;
-
-          -webkit-animation-fill-mode: forwards;
-          -moz-animation-fill-mode: forwards;
-          -o-animation-fill-mode: forwards;
-          animation-fill-mode: forwards;
-        }
-
-        @keyframes #{$name} {
-          from {
-            -webkit-transform: translate(121px * ($col - 1), ($row1 - 1) * 121px);
-            -moz-transform: translate(121px * ($col - 1), ($row1 - 1) * 121px);
-            -ms-transform: translate(121px * ($col - 1), ($row1 - 1) * 121px);
-            -o-transform: translate(121px * ($col - 1), ($row1 - 1) * 121px);
-            transform: translate(121px * ($col - 1), ($row1 - 1) * 121px);
-          }
-          to {
-            -webkit-transform: translate(121px * ($col - 1), ($row2 - 1) * 121px);
-            -moz-transform: translate(121px * ($col - 1), ($row2 - 1) * 121px);
-            -ms-transform: translate(121px * ($col - 1), ($row2 - 1) * 121px);
-            -o-transform: translate(121px * ($col - 1), ($row2 - 1) * 121px);
-            transform: translate(121px * ($col - 1), ($row2 - 1) * 121px);
-          }
-        }
-      }
-    }
-  }
-}
-
-@for $row from 1 to 4 {
-  @for $col1 from 1 to 4 {
-    @for $col2 from 1 to 4 {
-      $name: for-row-#{$row}-from-col-#{$col1}-to-#{$col2};
-
-      @if $col1 == $col2 {
-        .#{$name} {
-          -webkit-transform: translate(121px * ($col1 - 1), ($row - 1) * 121px);
-          -moz-transform: translate(121px * ($col1 - 1), ($row - 1) * 121px);
-          -ms-transform: translate(121px * ($col1 - 1), ($row - 1) * 121px);
-          -o-transform: translate(121px * ($col1 - 1), ($row - 1) * 121px);
-          transform: translate(121px * ($col1 - 1), ($row - 1) * 121px);
-        }
-      } @else {
-        .#{$name} {
-          -webkit-animation-name: #{$name};
-          -moz-animation-name: #{$name};
-          -o-animation-name: #{$name};
-          animation-name: #{$name};
-
-          -webkit-animation-duration: 0.1s;
-          -moz-animation-duration: 0.1s;
-          -o-animation-duration: 0.1s;
-          animation-duration: 0.1s;
-
-          -webkit-animation-fill-mode: forwards;
-          -moz-animation-fill-mode: forwards;
-          -o-animation-fill-mode: forwards;
-          animation-fill-mode: forwards;
-        }
-
-        @keyframes #{$name} {
-          from {
-            -webkit-transform: translate(121px * ($col1 - 1), ($row - 1) * 121px);
-            -moz-transform: translate(121px * ($col1 - 1), ($row - 1) * 121px);
-            -ms-transform: translate(121px * ($col1 - 1), ($row - 1) * 121px);
-            -o-transform: translate(121px * ($col1 - 1), ($row - 1) * 121px);
-            transform: translate(121px * ($col1 - 1), ($row - 1) * 121px);
-          }
-          to {
-            -webkit-transform: translate(121px * ($col2 - 1), ($row -1) * 121px);
-            -moz-transform: translate(121px * ($col2 - 1), ($row -1) * 121px);
-            -ms-transform: translate(121px * ($col2 - 1), ($row -1) * 121px);
-            -o-transform: translate(121px * ($col2 - 1), ($row -1) * 121px);
-            transform: translate(121px * ($col2 - 1), ($row -1) * 121px);
-          }
-
-        }
-      }
-    }
-  }
-}
 
 .aaaaa{
   color: black;
@@ -1134,6 +1140,8 @@ hr {
     -moz-transform: translate(202px, 202px);
     transform: translate(202px, 202px);
   }
+
+  @include create-animations-for-media(67);
 
   .tile .tile-inner {
     font-size: 35px;
@@ -1799,6 +1807,8 @@ footer {
     -moz-transform: translate(328px, 328px);
     transform: translate(328px, 328px);
   }
+
+  @include create-animations-for-media(109);
 
   .tile .tile-inner {
     font-size: 53px;

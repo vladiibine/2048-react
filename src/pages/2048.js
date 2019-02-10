@@ -138,7 +138,7 @@ export class NumberCell extends React.Component {
       positionClass = `for-col-${x + 1}-from-row-${oldY + 1}-to-${y + 1}`
     } else if (oldX !== x){
       positionClass = `for-row-${y + 1}-from-col-${oldX + 1}-to-${x + 1}`
-    } else if (appearing){
+    } else {
       positionClass = `tile-position-${x + 1}-${y + 1}`
     }
     let appearingClass = `${appearing || oldValue !== value ? 'tile-new' : ''}`;
