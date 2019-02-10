@@ -1,99 +1,5 @@
-//body {
-//  position: relative;
-//}
-//
-//.grid-container {
-//  //padding: 100px;
-//  //position: absolute;
-//  margin: 0 auto;
-//  width: 500px;
-//  display: block;
-//}
-//
-//.grid-elem {
-//  display: inline;
-//  padding: 10px;
-//  //margin: 10em;
-//  //border: 10em;
-//  //float: left;
-//  //position: relative;
-//  background-color: #998877;
-//  width: 30px;
-//  height: 10px;
-//  min-width: 40px;
-//  max-width: 20px;
-//}
-//
-//.num {
-//  position: absolute;
-//}
-//
-//.grid-row {
-//  display: block;
-//  padding: 10px;
-//}
-//
-//.container {
-//  width: 280px;
-//  margin: 0 auto;
-//}
-//
-//.game-container {
-//  margin-top: 10px;
-//  position: relative;
-//  padding: 10px;
-//  touch-action: none;
-//  border-radius: 6px;
-//  width: 280px;
-//  height: 280px;
-//  -webkit-box-sizing: border-box;
-//  -moz-box-sizing: border-box;
-//  box-sizing: border-box;
-//}
-//
-//.grid-row {
-//  margin-bottom: 10px;
-//}
-//
-//.grid-cell {
-//  width: 58.5px;
-//  height: 57.5px;
-//  margin-right: 10px;
-//  float: left;
-//  border-radius: 3px;
-//  background: rgba(238, 228, 218, 0.35);
-//}
-//
-//.tile-container {
-//  position: absolute;
-//  z-index: 2;
-//}
-//
-//.tile {
-//  width: 58px;
-//  height: 58px;
-//  line-height: 68.5px;
-//  position: absolute;
-//  transition: 100ms ease-in-out;
-//  -webkit-transition-property: transform;
-//  -moz-transition-property: transform;
-//  -ms-transition-property: transform;
-//  -o-transition-property: transform;
-//  transition-property: transform;
-//}
-//
-//
-//@for $x from 0 to 3 {
-//  @for $y from 0 to 3 {
-//    .pos-#{$x}-#{$y} {
-//      //position: absolute;
-//      left: #{300 + $x * 50}px;
-//      top: #{300 + $y * 50}px;
-//      //padding: (9px + 1px);
-//    }
-//  }
-//}
-// This mixin was NOT borrowed, but I got inspiration from a similar idea
+// Vlad: These mixin was NOT borrowed, but I got inspiration from a similar idea
+// https://github.com/IvanVergiliev/2048-react
 @mixin create-animations-for-media($square-size){
   @for $col from 1 to 5 {
   @for $row1 from 1 to 5 {
@@ -201,6 +107,19 @@
 }
 }
 
+@mixin create-static-positions($square-size){
+  @for $row from 1 to 5 {
+    @for $col from 1 to 5 {
+      .tile.tile-position-#{$row}-#{$col}{
+        -webkit-transform: translate(1px * ($row - 1) * $square-size, 1px * ($col - 1) * $square-size);
+        -moz-transform: translate(1px * ($row - 1) * $square-size, 1px * ($col - 1) * $square-size);
+        -ms-transform: translate(1px * ($row - 1) * $square-size, 1px * ($col - 1) * $square-size);
+        -o-transform: translate(1px * ($row - 1) * $square-size, 1px * ($col - 1) * $square-size);
+        transform: translate(1px * ($row - 1) * $square-size, 1px * ($col - 1) * $square-size);
+      }
+    }
+  }
+}
 
 // absolutely this CSS was "borrowed". I'm absolutely no designer!
 
@@ -517,102 +436,7 @@ hr {
   line-height: 116.25px;
 }
 
-.tile.tile-position-1-1 {
-  -webkit-transform: translate(0px, 0px);
-  -moz-transform: translate(0px, 0px);
-  transform: translate(0px, 0px);
-}
-
-.tile.tile-position-1-2 {
-  -webkit-transform: translate(0px, 121px);
-  -moz-transform: translate(0px, 121px);
-  transform: translate(0px, 121px);
-}
-
-.tile.tile-position-1-3 {
-  -webkit-transform: translate(0px, 242px);
-  -moz-transform: translate(0px, 242px);
-  transform: translate(0px, 242px);
-}
-
-.tile.tile-position-1-4 {
-  -webkit-transform: translate(0px, 363px);
-  -moz-transform: translate(0px, 363px);
-  transform: translate(0px, 363px);
-}
-
-.tile.tile-position-2-1 {
-  -webkit-transform: translate(121px, 0px);
-  -moz-transform: translate(121px, 0px);
-  transform: translate(121px, 0px);
-}
-
-.tile.tile-position-2-2 {
-  -webkit-transform: translate(121px, 121px);
-  -moz-transform: translate(121px, 121px);
-  transform: translate(121px, 121px);
-}
-
-.tile.tile-position-2-3 {
-  -webkit-transform: translate(121px, 242px);
-  -moz-transform: translate(121px, 242px);
-  transform: translate(121px, 242px);
-}
-
-.tile.tile-position-2-4 {
-  -webkit-transform: translate(121px, 363px);
-  -moz-transform: translate(121px, 363px);
-  transform: translate(121px, 363px);
-}
-
-.tile.tile-position-3-1 {
-  -webkit-transform: translate(242px, 0px);
-  -moz-transform: translate(242px, 0px);
-  transform: translate(242px, 0px);
-}
-
-.tile.tile-position-3-2 {
-  -webkit-transform: translate(242px, 121px);
-  -moz-transform: translate(242px, 121px);
-  transform: translate(242px, 121px);
-}
-
-.tile.tile-position-3-3 {
-  -webkit-transform: translate(242px, 242px);
-  -moz-transform: translate(242px, 242px);
-  transform: translate(242px, 242px);
-}
-
-.tile.tile-position-3-4 {
-  -webkit-transform: translate(242px, 363px);
-  -moz-transform: translate(242px, 363px);
-  transform: translate(242px, 363px);
-}
-
-.tile.tile-position-4-1 {
-  -webkit-transform: translate(363px, 0px);
-  -moz-transform: translate(363px, 0px);
-  transform: translate(363px, 0px);
-}
-
-.tile.tile-position-4-2 {
-  -webkit-transform: translate(363px, 121px);
-  -moz-transform: translate(363px, 121px);
-  transform: translate(363px, 121px);
-}
-
-.tile.tile-position-4-3 {
-  -webkit-transform: translate(363px, 242px);
-  -moz-transform: translate(363px, 242px);
-  transform: translate(363px, 242px);
-}
-
-.tile.tile-position-4-4 {
-  -webkit-transform: translate(363px, 363px);
-  -moz-transform: translate(363px, 363px);
-  transform: translate(363px, 363px);
-}
-
+@include create-static-positions(121);
 @include create-animations-for-media(121);
 
 
@@ -1060,86 +884,8 @@ hr {
     height: 58px;
     line-height: 67.5px;
   }
-  .tile.tile-position-1-1 {
-    -webkit-transform: translate(0px, 0px);
-    -moz-transform: translate(0px, 0px);
-    transform: translate(0px, 0px);
-  }
-  .tile.tile-position-1-2 {
-    -webkit-transform: translate(0px, 67px);
-    -moz-transform: translate(0px, 67px);
-    transform: translate(0px, 67px);
-  }
-  .tile.tile-position-1-3 {
-    -webkit-transform: translate(0px, 135px);
-    -moz-transform: translate(0px, 135px);
-    transform: translate(0px, 135px);
-  }
-  .tile.tile-position-1-4 {
-    -webkit-transform: translate(0px, 202px);
-    -moz-transform: translate(0px, 202px);
-    transform: translate(0px, 202px);
-  }
-  .tile.tile-position-2-1 {
-    -webkit-transform: translate(67px, 0px);
-    -moz-transform: translate(67px, 0px);
-    transform: translate(67px, 0px);
-  }
-  .tile.tile-position-2-2 {
-    -webkit-transform: translate(67px, 67px);
-    -moz-transform: translate(67px, 67px);
-    transform: translate(67px, 67px);
-  }
-  .tile.tile-position-2-3 {
-    -webkit-transform: translate(67px, 135px);
-    -moz-transform: translate(67px, 135px);
-    transform: translate(67px, 135px);
-  }
-  .tile.tile-position-2-4 {
-    -webkit-transform: translate(67px, 202px);
-    -moz-transform: translate(67px, 202px);
-    transform: translate(67px, 202px);
-  }
-  .tile.tile-position-3-1 {
-    -webkit-transform: translate(135px, 0px);
-    -moz-transform: translate(135px, 0px);
-    transform: translate(135px, 0px);
-  }
-  .tile.tile-position-3-2 {
-    -webkit-transform: translate(135px, 67px);
-    -moz-transform: translate(135px, 67px);
-    transform: translate(135px, 67px);
-  }
-  .tile.tile-position-3-3 {
-    -webkit-transform: translate(135px, 135px);
-    -moz-transform: translate(135px, 135px);
-    transform: translate(135px, 135px);
-  }
-  .tile.tile-position-3-4 {
-    -webkit-transform: translate(135px, 202px);
-    -moz-transform: translate(135px, 202px);
-    transform: translate(135px, 202px);
-  }
-  .tile.tile-position-4-1 {
-    -webkit-transform: translate(202px, 0px);
-    -moz-transform: translate(202px, 0px);
-    transform: translate(202px, 0px);
-  }
-  .tile.tile-position-4-2 {
-    -webkit-transform: translate(202px, 67px);
-    -moz-transform: translate(202px, 67px);
-    transform: translate(202px, 67px);
-  }
-  .tile.tile-position-4-3 {
-    -webkit-transform: translate(202px, 135px);
-    -moz-transform: translate(202px, 135px);
-    transform: translate(202px, 135px);
-  }
-  .tile.tile-position-4-4 {
-    -webkit-transform: translate(202px, 202px);
-    -moz-transform: translate(202px, 202px);
-    transform: translate(202px, 202px);
-  }
+
+  @include create-static-positions(67);
 
   @include create-animations-for-media(67);
 
@@ -1727,86 +1473,9 @@ footer {
     height: 98px;
     line-height: 107.5px;
   }
-  .tile.tile-position-1-1 {
-    -webkit-transform: translate(0px, 0px);
-    -moz-transform: translate(0px, 0px);
-    transform: translate(0px, 0px);
-  }
-  .tile.tile-position-1-2 {
-    -webkit-transform: translate(0px, 109px);
-    -moz-transform: translate(0px, 109px);
-    transform: translate(0px, 109px);
-  }
-  .tile.tile-position-1-3 {
-    -webkit-transform: translate(0px, 219px);
-    -moz-transform: translate(0px, 219px);
-    transform: translate(0px, 219px);
-  }
-  .tile.tile-position-1-4 {
-    -webkit-transform: translate(0px, 328px);
-    -moz-transform: translate(0px, 328px);
-    transform: translate(0px, 328px);
-  }
-  .tile.tile-position-2-1 {
-    -webkit-transform: translate(109px, 0px);
-    -moz-transform: translate(109px, 0px);
-    transform: translate(109px, 0px);
-  }
-  .tile.tile-position-2-2 {
-    -webkit-transform: translate(109px, 109px);
-    -moz-transform: translate(109px, 109px);
-    transform: translate(109px, 109px);
-  }
-  .tile.tile-position-2-3 {
-    -webkit-transform: translate(109px, 219px);
-    -moz-transform: translate(109px, 219px);
-    transform: translate(109px, 219px);
-  }
-  .tile.tile-position-2-4 {
-    -webkit-transform: translate(109px, 328px);
-    -moz-transform: translate(109px, 328px);
-    transform: translate(109px, 328px);
-  }
-  .tile.tile-position-3-1 {
-    -webkit-transform: translate(219px, 0px);
-    -moz-transform: translate(219px, 0px);
-    transform: translate(219px, 0px);
-  }
-  .tile.tile-position-3-2 {
-    -webkit-transform: translate(219px, 109px);
-    -moz-transform: translate(219px, 109px);
-    transform: translate(219px, 109px);
-  }
-  .tile.tile-position-3-3 {
-    -webkit-transform: translate(219px, 219px);
-    -moz-transform: translate(219px, 219px);
-    transform: translate(219px, 219px);
-  }
-  .tile.tile-position-3-4 {
-    -webkit-transform: translate(219px, 328px);
-    -moz-transform: translate(219px, 328px);
-    transform: translate(219px, 328px);
-  }
-  .tile.tile-position-4-1 {
-    -webkit-transform: translate(328px, 0px);
-    -moz-transform: translate(328px, 0px);
-    transform: translate(328px, 0px);
-  }
-  .tile.tile-position-4-2 {
-    -webkit-transform: translate(328px, 109px);
-    -moz-transform: translate(328px, 109px);
-    transform: translate(328px, 109px);
-  }
-  .tile.tile-position-4-3 {
-    -webkit-transform: translate(328px, 219px);
-    -moz-transform: translate(328px, 219px);
-    transform: translate(328px, 219px);
-  }
-  .tile.tile-position-4-4 {
-    -webkit-transform: translate(328px, 328px);
-    -moz-transform: translate(328px, 328px);
-    transform: translate(328px, 328px);
-  }
+
+  @include create-static-positions(109);
+
 
   @include create-animations-for-media(109);
 
